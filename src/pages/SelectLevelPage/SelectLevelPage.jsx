@@ -42,7 +42,7 @@ export function SelectLevelPage() {
             />
             <span className={styles.slider}></span>
           </label>
-          <p>Упрощенный режим</p>
+          <p>Упрощенны режим</p>
         </div>
       </div>
     </div>
