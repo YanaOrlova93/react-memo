@@ -116,7 +116,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     // Победа - все карты на поле открыты
     if (isPlayerWon) {
       finishGame(STATUS_WON);
-      if (window.location.pathname === "/react-memo/game/9" && easyModeStatus === false) {
+      if (window.location.pathname === "/react-memo/game/3" && easyModeStatus === false) {
         setIsLeader(!isLeader);
       }
       return;
