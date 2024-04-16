@@ -11,7 +11,7 @@ export function LeaderboardPage() {
   // Получаем массив из API при рендере компонента, сортируем по времени игры, кидаем в items
   useEffect(() => {
     getLeaderboard().then(data => {
-      setItems(data.sort((a, b) => a.time - b.time));
+      setItems(data.sort((a, b) => a.time - b.time).slice(0, 10));
     });
   }, []);
   return (
