@@ -168,23 +168,15 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     if (clickedCard.open) {
       return;
     }
-    // Игровое поле после открытия кликнутой карты
+    // Открытие кликнутой карты
     const nextCards = cards.map(card => {
-      if (card.id !== clickedCard.id) {
-        return card;
+      if (card.id === clickedCard.id) {
+        return { ...card, open: true };
       }
-
-      return {
-        ...card,
-        open: true,
-      };
+      return card;
     });
-
     setCards(nextCards);
-
     const isPlayerWon = nextCards.every(card => card.open);
-
-    // Победа - все карты на поле открыты
     if (isPlayerWon) {
       finishGame(STATUS_WON);
       if (window.location.pathname === "/react-memo/game/9") {
@@ -192,44 +184,31 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
       }
       return;
     }
-
     // Открытые карты на игровом поле
     const openCards = nextCards.filter(card => card.open);
-
-    // Ищем открытые карты, у которых нет пары среди других открытых
     const openCardsWithoutPair = openCards.filter(card => {
       const sameCards = openCards.filter(openCard => card.suit === openCard.suit && card.rank === openCard.rank);
-
-      if (sameCards.length < 2) {
-        return true;
-      }
-
-      return false;
+      return sameCards.length < 2;
     });
-
-    // "Игрок проиграл", т.к на поле есть две открытые карты без пары
     if (openCardsWithoutPair.length >= 2) {
-      // Если включен упрощенный режим
-      if (easyModeStatus) {
-        const newLifesCounter = lifesCounter - 1;
-        setTimeout(() => {
-          setCards(nextCards.map(item => (openCardsWithoutPair.includes(item) ? { ...item, open: false } : item)));
-
+      setTimeout(() => {
+        setCards(nextCards.map(item => (openCardsWithoutPair.includes(item) ? { ...item, open: false } : item)));
+        if (easyModeStatus) {
+          const newLifesCounter = lifesCounter - 1;
+          setLifesCounter(newLifesCounter);
           if (newLifesCounter === 0) {
             finishGame(STATUS_LOST); // Игра закончена, если попытки исчерпаны
           } else {
-            setLifesCounter(newLifesCounter);
             setStatus(STATUS_IN_PROGRESS); // Игра продолжается
           }
-        }, 1000); // Задержка в 1 секунду перед закрытием карт
-      } else {
-        finishGame(STATUS_LOST); // Обычный режим: игра заканчивается сразу
-      }
+        } else {
+          finishGame(STATUS_LOST); // Обычный режим: игра заканчивается сразу после задержки
+        }
+      }, 1000); // Задержка в 1 секунду перед закрытием карт в обоих режимах
       return;
     }
     // ... игра продолжается
   };
-
   const isGameEnded = status === STATUS_LOST || status === STATUS_WON;
 
   // Игровой цикл
