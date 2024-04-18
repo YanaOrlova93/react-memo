@@ -86,23 +86,29 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     if (alohomora > 0) {
       // Ищем все закрытые карты на поле
       const closedCards = cards.filter(card => card.open === false);
-      // Находим случайную карту из закрытых
-      const randomCard = closedCards[Math.floor(Math.random() * closedCards.length)];
-      // Находим пару для случайной карты
-      const twoRandomCards = closedCards.filter(card => card.suit === randomCard.suit && card.rank === randomCard.rank);
-      // Меняем open у случайной пары карт
-      const newCards = cards.map(card => {
-        if (card.id === twoRandomCards[0].id) {
-          return { ...card, open: true };
-        }
-        if (card.id === twoRandomCards[1].id) {
-          return { ...card, open: true };
-        }
-        return card;
-      });
-      setCards(newCards);
-      // Уменьшаем счетчик, способности больше нет
-      setAlohomora(alohomora - 1);
+      if (closedCards.length > 1) {
+        // Находим случайную карту из закрытых
+        const randomCard = closedCards[Math.floor(Math.random() * closedCards.length)];
+        // Находим пару для случайной карты
+        const twoRandomCards = closedCards.filter(
+          card => card.suit === randomCard.suit && card.rank === randomCard.rank,
+        );
+        // Меняем open у случайной пары карт
+        const newCards = cards.map(card => {
+          if (card.id === twoRandomCards[0].id) {
+            return { ...card, open: true };
+          }
+          if (card.id === twoRandomCards[1].id) {
+            return { ...card, open: true };
+          }
+          return card;
+        });
+        setCards(newCards);
+        // Уменьшаем счетчик, способности больше нет
+        setAlohomora(alohomora - 1);
+      } else {
+        console.error('Недостаточно карт для использования "Алохомора"');
+      }
     }
   }
   // Cостояние паузы для таймера
