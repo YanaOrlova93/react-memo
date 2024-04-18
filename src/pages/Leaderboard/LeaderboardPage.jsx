@@ -13,7 +13,7 @@ export function LeaderboardPage() {
   // Получаем массив из API при рендере компонента, сортируем по времени игры, кидаем в items
   useEffect(() => {
     getLeaderboard().then(data => {
-      setItems(data.sort((a, b) => a.time - b.time).slice(0, 10));
+      setItems(data.sort((a, b) => a.time - b.time));
     });
   }, []);
   return (
@@ -25,7 +25,7 @@ export function LeaderboardPage() {
         </Link>
       </header>
       <ul className={styles.list}>
-        <li className={styles.firstline} key="0">
+        <li className={styles.firstline} key={0}>
           <p>Позиция</p>
           <p>Пользователь</p>
           <p>Достижения</p>
@@ -36,29 +36,31 @@ export function LeaderboardPage() {
             <p># {items.indexOf(item) + 1}</p>
             <p>{item.name}</p>
             <div className={styles.achievements}>
-              {item.achievements.map(item => {
-                if (item === 1) {
-                  return (
-                    <div className={styles.achievement_block}>
-                      <img src={puzzleUrl} alt="puzzle" className={styles.achivment_svg} />
-                      <span className={styles.achievement_description}>
-                        Игра пройдена <br /> в сложном режиме
-                      </span>
-                    </div>
-                  );
-                }
-                if (item === 2) {
-                  return (
-                    <div className={styles.achievement_block}>
-                      <img src={ballUrl} alt="ball" className={styles.achivment_svg} />
-                      <span className={styles.achievement_description}>
-                        Игра пройдена <br />
-                        без супер-сил
-                      </span>
-                    </div>
-                  );
-                }
-              })}
+              {item.achievements
+                ? item.achievements.map(item => {
+                    if (item === 1) {
+                      return (
+                        <div className={styles.achievement_block}>
+                          <img src={puzzleUrl} alt="puzzle" className={styles.achivment_svg} />
+                          <span className={styles.achievement_description}>
+                            Игра пройдена <br /> в сложном режиме
+                          </span>
+                        </div>
+                      );
+                    }
+                    if (item === 2) {
+                      return (
+                        <div className={styles.achievement_block}>
+                          <img src={ballUrl} alt="ball" className={styles.achivment_svg} />
+                          <span className={styles.achievement_description}>
+                            Игра пройдена <br />
+                            без супер-сил
+                          </span>
+                        </div>
+                      );
+                    }
+                  })
+                : ""}
             </div>
             <p>{formatTime(item.time)}</p>
           </li>
