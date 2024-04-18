@@ -207,31 +207,24 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
       return false;
     });
 
-    const playerLost = openCardsWithoutPair.length >= 2;
-
     // "Игрок проиграл", т.к на поле есть две открытые карты без пары
-    if (playerLost) {
+    if (openCardsWithoutPair.length >= 2) {
       // Если включен упрощенный режим
       if (easyModeStatus) {
-        // Если счетчик стал равен нулю - игра окончена
-        if (lifesCounter === 1) {
-          finishGame(STATUS_LOST);
-          return;
-        } else {
-          // Уменьшаем счетчик попыток
-          setLifesCounter(lifesCounter - 1);
-          setCards(
-            nextCards.map(item =>
-              openCardsWithoutPair.includes(item)
-                ? { id: item.id, suit: item.suit, rank: item.rank, open: false }
-                : item,
-            ),
-          );
-          setStatus(STATUS_IN_PROGRESS);
-          return;
-        }
+        const newLifesCounter = lifesCounter - 1;
+        setTimeout(() => {
+          setCards(nextCards.map(item => (openCardsWithoutPair.includes(item) ? { ...item, open: false } : item)));
+
+          if (newLifesCounter === 0) {
+            finishGame(STATUS_LOST); // Игра закончена, если попытки исчерпаны
+          } else {
+            setLifesCounter(newLifesCounter);
+            setStatus(STATUS_IN_PROGRESS); // Игра продолжается
+          }
+        }, 1000); // Задержка в 1 секунду перед закрытием карт
+      } else {
+        finishGame(STATUS_LOST); // Обычный режим: игра заканчивается сразу
       }
-      finishGame(STATUS_LOST);
       return;
     }
     // ... игра продолжается
